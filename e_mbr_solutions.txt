@@ -1,0 +1,30 @@
+1) $ sudo dd if=/dev/sd<x> count=1 bs=512 | \
+     hexdump -e '"[0x%04_ax] "' -e '8/1 "%02x "' -e '"\n"'
+
+2) - Größe eines Partitionstabelleneintrags: 16 Bytes
+   - Offset des ersten Eintrags: 0x01BE (446(10))
+   $ sudo dd if=<path> count=16 bs=1 skip=446 2> | \
+   hexdump -e '"[0x%02_ax] "' -e '8/1 "%02x "' -e '"\n"'
+   # Für die Anzahl der Sektoren besser:
+   $ sudo dd if=<path> count=16 bs=1 skip=446 2> | \
+   hexdump -e '"[0x%02_ax] "' -e '2/4 "%d "' -e '"\n"'
+
+Beispielausgabe (Hexadezimal):
+[0x00] 00 20 21 00 83 fe ff ff
+[0x08] 00 08 00 00 00 f8 3f 1a
+
+Beispielausgabe (Integer):
+[0x00] 2170880 -381
+[0x08] 2048 440399872
+
+3) Unter Annahme der Beispielausgabe in (2)
+3)a) Typ: 0x83 => Linux native
+3)b) 1. CHS-Eintrag: 0x20, 0x21, 0x00
+3)c) Nicht startfähig, da 0x00 bei Offset 0x0000
+3)d) 440399872 (Bytes 0x0C -> 0x0F interpretiert in litte endian)
+3)e) 2. CHS-Eintrag: 0xfe, 0xff, 0xff
+3)f) 2048 (Bytes 0x08 -> 0x0B interpretiert in little endian)
+
+4) Für die Angabe der Anzahl der Sektoren (bzw. Blöcke) pro Partition, stehen lediglich
+32 Bit zur Verfügung. Daraus ergibt sich eine maximale Partitionsgröße von
+(2^32-1)*2^9 = (Näherung) 2^41Bytes = 2TiB
