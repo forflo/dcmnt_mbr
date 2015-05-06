@@ -70,8 +70,8 @@ Die folgenden Grafiken und Tabellen zeigen den Aufbau eines MBRs im Detail.
 
 \begin{table}[h]
 	\begin{center}
-		
-		\begin{tabular}[c]{  l | l | l }
+		\begin{tabular}[c]{ | l | l | l |}
+		\hline
 		\cellcolor{grey} Offset & \cellcolor{grey} Inhalt & \cellcolor{grey} Größe in Bytes \\ \hline
 		0x0000 & Bootloader & 446\\ \hline
 		0x01BE & 1. Partitionseintrag & 16 \\ \hline
@@ -79,7 +79,7 @@ Die folgenden Grafiken und Tabellen zeigen den Aufbau eines MBRs im Detail.
 		0x01DE & 3. Partitionseintrag & 16 \\ \hline
 		0x01EE & 4. Partitionseintrag & 16 \\ \hline
 		0x01FE & 0x55 & 1\\ \hline
-		0x01FF & 0xAA & 1\\
+		0x01FF & 0xAA & 1\\ \hline
 		\end{tabular}
 	\end{center}
 	
@@ -107,18 +107,19 @@ Die folgenden Grafiken und Tabellen zeigen den Aufbau eines MBRs im Detail.
 
 \begin{table}[h]
 	\begin{center}
-		\begin{tabular}[c]{  l | l | l }
+		\begin{tabular}[c]{ | l | l | l |}
+		\hline
 		\cellcolor{grey} Offset & \cellcolor{grey} Inhalt & \cellcolor{grey} Größe in Bytes \\ \hline
 		0x00 & Bootfähigkeit \(0x80_{hex}=bootable, 0x00_{hex}=not bootable\) & 1\\ \hline
 		0x01 & CHS-Eintrag des ersten Sektors & 3 \\ \hline
 		0x04 & Partitionstyp & 1 \\ \hline
 		0x05 & CHS-Eintrag des letzten Sektors & 3 \\ \hline
-		0x08 & Startsektor & 4 \\ \hline
-		0x0C & Sektorenanzahl (LBA-Nummerierung) & 4\\
+		0x08 & Startblock (gezählt ab 0 = Plattenanfang) & 4 \\ \hline
+		0x0C & Anzahl der Blöcke (LBA-Nummerierung, je 512 Bytes) & 4\\ \hline
 		\end{tabular}
 	\end{center}
 	
-	\caption{Aufbau eines Partitionstabelleneintrags}
+	\caption{Aufbau eines Partitionstabelleneintrags (Offset bezieht sich auf den Anfang eines Partitionstabelleneintrages)}
 	\label{tab:mbr_partentry_tbl}
 \end{table}
 
@@ -126,33 +127,20 @@ Die folgenden Grafiken und Tabellen zeigen den Aufbau eines MBRs im Detail.
 
 \begin{table}[h]
 	\begin{center}
-		\begin{tabular}[c]{ l | l }
+		\begin{tabular}[c]{ | l | l |}
+		\hline
 		\cellcolor{grey} Typcode & \cellcolor{grey} Bezeichner \\ \hline
 		0x00 & leer/unbenutzt \\ \hline
-		0x01 & FAT12 (Floppy Disks) \\ \hline
-		0x04 & FAT16 \(<=\) 32 MiB \\ \hline
-		0x05 & erweiterte Partition \\ \hline
 		0x06 & FAT16 \(>\) 32 MiB \\ \hline
 		0x07 & NTFS (Windows NT/2000/XP/Vista/7/8), HPFS (OS/2) oder exFAT \\ \hline
 		0x0B & FAT32 \\ \hline
-		0x0C & FAT32 mit BIOS-Extensions (LBA) \\ \hline
-		0x0E & FAT16 \(>\) 32 MiB mit BIOS-Extensions (LBA) \\ \hline
-		0x0F & erweiterte Partition mit BIOS-Extensions (LBA) \\ \hline
-		0x12 & OEM-Partition für Konfiguration \\ \hline
-		0x27 & Windows RE versteckte Partition \\ \hline
-		0x42 & Dynamischer Datenträger \\ \hline
 		0x82 & Linux Swap / Solaris 2.6 X86 bis Solaris 9 X86 \\ \hline
 		0x83 & Linux Native \\ \hline
-		0x8E & Linux LVM \\ \hline
-		0xA5 & FreeBSD \\ \hline
 		0xA6 & OpenBSD \\ \hline
-		0xA9 & NetBSD \\ \hline
-		0xEE & Legacy MBR mit folgendem EFI-Header \\ \hline
-		0xEF & EFI-Dateisystem \\ 
 		\end{tabular}
 	\end{center}
 	
-	\caption{Partitionstypen und deren Kodierung}
+	\caption{Auswahl einiger Partitionstypen und deren Kodierung}
 	\label{tab:mbr_parttype}
 \end{table}
 
@@ -162,6 +150,18 @@ Die folgenden Grafiken und Tabellen zeigen den Aufbau eines MBRs im Detail.
 	\caption{Aufbau eines CHS-Eintrags}
 	\label{fig:mbr_chsentry}
 \end{figure}
+
+\subsection{Beispielhafter Aufbau eines CHS-Eintrags}
+\paragraph{Fragestellung}
+Angenommen die folgenden Bytes liegen der Reihe nach
+im MBR: 0xF3 0xFF 0x32. Bestimmen Sie die Nummer des Kopfs, des
+Sectors und des Zylinders. 
+\paragraph{Lösung}
+\begin{itemize}
+	\item Kopf: \(F3_{(16)} = 243_{(10)}\),
+	\item Sektor: \(FF_{(16)} = 1111111_{(2)} \Rightarrow 00111111_{(2)} = 127_{(10)}\) 
+	\item Zylinder: \(FF_{(16)}, 32_{(16)} \Rightarrow 1100000000_{(2)} + 32_{(16)} = 50_{(10)} + 512_{(10)} + 256_{(10)} = 818_{(10)}\)
+\end{itemize}
 \pagebreak{}
 
 \subsection{Kontext des MBRs in einem PC-System}
