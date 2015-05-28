@@ -107,7 +107,7 @@ Die folgenden Grafiken und Tabellen zeigen den Aufbau eines MBRs im Detail.
 
 \begin{table}[h]
 	\begin{center}
-		\begin{tabular}[c]{ | l | l | l |}
+		\begin{tabular}[c]{ | l | l | l | }
 		\hline
 		\cellcolor{grey} Offset & \cellcolor{grey} Inhalt & \cellcolor{grey} Größe in Bytes \\ \hline
 		0x00 & Bootfähigkeit \(0x80_{hex}=bootable, 0x00_{hex}=not bootable\) & 1\\ \hline
@@ -159,7 +159,7 @@ Sectors und des Zylinders.
 \paragraph{Lösung}
 \begin{itemize}
 	\item Kopf: \(F3_{(16)} = 243_{(10)}\),
-	\item Sektor: \(FF_{(16)} = 1111111_{(2)} \Rightarrow 00111111_{(2)} = 127_{(10)}\) 
+	\item Sektor: \(FF_{(16)} = 1111111_{(2)} \Rightarrow 00111111_{(2)} = 63_{(10)}\) 
 	\item Zylinder: \(FF_{(16)}, 32_{(16)} \Rightarrow 1100000000_{(2)} + 32_{(16)} = 50_{(10)} + 512_{(10)} + 256_{(10)} = 818_{(10)}\)
 \end{itemize}
 \pagebreak{}
@@ -172,6 +172,24 @@ Sectors und des Zylinders.
 \end{figure}
 
 \pagebreak{}
+
+\subsection{Konvertierung von CHS nach LBA}
+Die Formel zur Konvertierung von CHS-Adressen nach LBA-Adressen sein im Folgenden
+dargestellt.
+
+\[
+LBA = (c * H + h) * S + x - 1
+\]
+
+\begin{itemize}
+	\item \emph{LBA} Adresse des Blocks nach dem LBA-Verfahren
+	\item \emph{c} Zylindernummer
+	\item \emph{H} Zahl der Leseköpfe
+	\item \emph{h} Lesekopfnummer
+	\item \emph{S} Zahl der Sektoren. Zahl der Blöcke je Zylinder
+	\item \emph{s} Sektornummer
+\end{itemize}
+
 
 \section{Übung}
 \begin{enumerate}

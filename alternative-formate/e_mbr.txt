@@ -1,0 +1,87 @@
+EINFÜHRUNG
+
+
+Der MBR, kurz für Master Boot Record, stellt in vielen, heute immer noch
+im Einsatz befindlichen Rechnersystemen, den fundamentalen Übergang vom
+BIOS hin zum Betriebssystem sicher. Er beinhaltet unter anderem den
+Bootloader mit dem dieser Übergang, bzw. der eigentliche Startvorgang,
+erst ermöglicht wird. Der MBR ist eine 512 Bytes große Datenstruktur,
+die auf IBM-kompatiblen PC-Systemen _immer_ den 0-ten Datenblock eines
+Festspeichers (z.B. HDD, SDD, ...) füllt. Die wichtigsten Informationen,
+die er speichert, sind:
+
+-   Die Partitionstabelle,
+
+-   der Bootloader und
+
+-   die Datenträgersignatur.
+
+
+Beispielhafter Aufbau eines CHS-Eintrags
+
+Fragestellung
+
+Angenommen die folgenden Bytes liegen der Reihe nach im MBR: 0xF3 0xFF
+0x32. Bestimmen Sie die Nummer des Kopfs, des Sectors und des Zylinders.
+
+Lösung
+
+-   Kopf: F3(16) = 243(10),
+
+-   Sektor: FF(16) = 1111111(2) => 00111111(2) = 127(10)
+
+-   Zylinder:
+    FF(16), 32(16) => 1100000000(2) + 32(16) = 50(10) + 512(10) + 256(10) = 818(10)
+
+
+
+Konvertierung von CHS nach LBA
+
+Die Formel zur Konvertierung von CHS-Adressen nach LBA-Adressen sein im
+Folgenden dargestellt.
+
+_L__B__A_ = (_c_ * _H_ + _h_) * _S_ + _x_ − 1
+
+-   _LBA_ Adresse des Blocks nach dem LBA-Verfahren
+
+-   _c_ Zylindernummer
+
+-   _H_ Zahl der Leseköpfe
+
+-   _h_ Lesekopfnummer
+
+-   _S_ Zahl der Sektoren. Zahl der Blöcke je Zylinder
+
+-   _s_ Sektornummer
+
+
+
+ÜBUNG
+
+1.  Geben Sie den gesamten MBR einer Festplatte mittels dd und hexdump
+    aus.
+
+2.  Geben Sie den Partitionstabelleneintrag der ersten Partition aus.
+    Hinweis: Verwenden Sie wieder dd und hexdump
+
+3.  Bestimmen Sie:
+
+    -   den Typ der Partition,
+
+    -   den Start-CHS-Eintrag (Welche Nummer hat der Zylinder?),
+
+    -   die Startfähigkeit der Partition,
+
+    -   die Anzahl der Sektoren,
+
+    -   den End-CHS-Eintrag (Welche Nummer hat der Kopf?) und
+
+    -   den Startsektor.
+
+    Hinweis: Die Felder der Partitionstabelleneinträge werden immer im
+    Little-Endian-Format abgespeichert
+
+4.  Welches Problem sehen Sie im Bezug auf Partitionstabelleneinträge
+    (LBA) im Zusammenhang mit Partitionsgrößen?
+
+

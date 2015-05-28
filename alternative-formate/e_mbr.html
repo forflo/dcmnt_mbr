@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+	<title>MBR-Übung</title>
+	<meta charset="utf-8">
+</head>
+
+<body>
+
+
+<hr />
+
+<p>author:
+&ndash; Florian Mayer
+title: &lsquo; MBR-Übung&rsquo;
+&hellip;</p>
+
+<h1>Einführung</h1>
+
+<p>Der MBR, kurz für Master Boot Record, stellt in vielen, heute immer noch
+im Einsatz befindlichen Rechnersystemen, den fundamentalen Übergang vom
+BIOS hin zum Betriebssystem sicher. Er beinhaltet unter anderem den
+Bootloader mit dem dieser Übergang, bzw. der eigentliche Startvorgang,
+erst ermöglicht wird. Der MBR ist eine 512 Bytes große Datenstruktur,
+die auf IBM-kompatiblen PC-Systemen <em>immer</em> den 0-ten Datenblock eines
+Festspeichers (z.B. HDD, SDD, &hellip;) füllt. Die wichtigsten Informationen,
+die er speichert, sind:</p>
+
+<ul>
+<li><p>Die Partitionstabelle,</p></li>
+<li><p>der Bootloader und</p></li>
+<li><p>die Datenträgersignatur.</p></li>
+</ul>
+
+
+<h2>Beispielhafter Aufbau eines CHS-Eintrags</h2>
+
+<h4>Fragestellung</h4>
+
+<p>Angenommen die folgenden Bytes liegen der Reihe nach im MBR: 0xF3 0xFF
+0x32. Bestimmen Sie die Nummer des Kopfs, des Sectors und des Zylinders.</p>
+
+<h4>Lösung</h4>
+
+<ul>
+<li><p>Kopf: $F3<em>(16) = 243</em>(10)$,</p></li>
+<li><p>Sektor:
+FF<em>(16) = 1111111</em>(2) => 00111111<em>(2) = 127</em>(10)</p></li>
+<li><p>Zylinder:
+FF<em>(16), 32</em>(16) => 1100000000<em>(2) + 32</em>(16) = 50<em>(10) + 512</em>(10) + 256<em>(10) = 818</em>(10)</p></li>
+</ul>
+
+
+<h2>Konvertierung von CHS nach LBA</h2>
+
+<p>Die Formel zur Konvertierung von CHS-Adressen nach LBA-Adressen sein im
+Folgenden dargestellt.</p>
+
+<p>$$LBA = (c <em> H + h) </em> S + x &ndash; 1$$</p>
+
+<ul>
+<li><p><em>LBA</em> Adresse des Blocks nach dem LBA-Verfahren</p></li>
+<li><p><em>c</em> Zylindernummer</p></li>
+<li><p><em>H</em> Zahl der Leseköpfe</p></li>
+<li><p><em>h</em> Lesekopfnummer</p></li>
+<li><p><em>S</em> Zahl der Sektoren. Zahl der Blöcke je Zylinder</p></li>
+<li><p><em>s</em> Sektornummer</p></li>
+</ul>
+
+
+<h1>Übung</h1>
+
+<ol>
+<li><p>Geben Sie den gesamten MBR einer Festplatte mittels $dd$ und
+$hexdump$ aus.</p></li>
+<li><p>Geben Sie den Partitionstabelleneintrag der ersten Partition aus.
+Hinweis: Verwenden Sie wieder $dd$ und $hexdump$</p></li>
+<li><p>Bestimmen Sie:</p>
+
+<ul>
+<li><p>den Typ der Partition,</p></li>
+<li><p>den Start-CHS-Eintrag (Welche Nummer hat der Zylinder?),</p></li>
+<li><p>die Startfähigkeit der Partition,</p></li>
+<li><p>die Anzahl der Sektoren,</p></li>
+<li><p>den End-CHS-Eintrag (Welche Nummer hat der Kopf?) und</p></li>
+<li><p>den Startsektor.</p></li>
+</ul>
+
+
+<p>Hinweis: Die Felder der Partitionstabelleneinträge werden immer im
+Little-Endian-Format abgespeichert</p></li>
+<li><p>Welches Problem sehen Sie im Bezug auf Partitionstabelleneinträge
+(LBA) im Zusammenhang mit Partitionsgrößen?</p></li>
+</ol>
+
+</body>
+</html>
