@@ -1,27 +1,111 @@
 1) $ sudo dd if=/dev/sd<x> count=1 bs=512 | \
      hexdump -e '"[0x%04_ax] "' -e '8/1 "%02x "' -e '"\n"'
 
+    Die letzten zwei Bytes müssen 0x55 bzw. 0xAA sein. 
+    Die Referenzlösung für die VM ist:
+    --------------------------------
+    [0x0000] eb 63 90 10 8e d0 bc 00
+    [0x0008] b0 b8 00 00 8e d8 8e c0
+    [0x0010] fb be 00 7c bf 00 06 b9
+    [0x0018] 00 02 f3 a4 ea 21 06 00
+    [0x0020] 00 be be 07 38 04 75 0b
+    [0x0028] 83 c6 10 81 fe fe 07 75
+    [0x0030] f3 eb 16 b4 02 b0 01 bb
+    [0x0038] 00 7c b2 80 8a 74 01 8b
+    [0x0040] 4c 02 cd 13 ea 00 7c 00
+    [0x0048] 00 eb fe 00 00 00 00 00
+    [0x0050] 00 00 00 00 00 00 00 00
+    [0x0058] 00 00 00 80 01 00 00 00
+    [0x0060] 00 00 00 00 ff fa 90 90
+    [0x0068] f6 c2 80 75 02 b2 80 ea
+    [0x0070] 74 7c 00 00 31 c0 8e d8
+    [0x0078] 8e d0 bc 00 20 fb a0 64
+    [0x0080] 7c 3c ff 74 02 88 c2 52
+    [0x0088] bb 17 04 80 27 03 74 06
+    [0x0090] be 88 7d e8 1c 01 be 05
+    [0x0098] 7c f6 c2 80 74 48 b4 41
+    [0x00a0] bb aa 55 cd 13 5a 52 72
+    [0x00a8] 3d 81 fb 55 aa 75 37 83
+    [0x00b0] e1 01 74 32 31 c0 89 44
+    [0x00b8] 04 40 88 44 ff 89 44 02
+    [0x00c0] c7 04 10 00 66 8b 1e 5c
+    [0x00c8] 7c 66 89 5c 08 66 8b 1e
+    [0x00d0] 60 7c 66 89 5c 0c c7 44
+    [0x00d8] 06 00 70 b4 42 cd 13 72
+    [0x00e0] 05 bb 00 70 eb 76 b4 08
+    [0x00e8] cd 13 73 0d f6 c2 80 0f
+    [0x00f0] 84 d0 00 be 93 7d e9 82
+    [0x00f8] 00 66 0f b6 c6 88 64 ff
+    [0x0100] 40 66 89 44 04 0f b6 d1
+    [0x0108] c1 e2 02 88 e8 88 f4 40
+    [0x0110] 89 44 08 0f b6 c2 c0 e8
+    [0x0118] 02 66 89 04 66 a1 60 7c
+    [0x0120] 66 09 c0 75 4e 66 a1 5c
+    [0x0128] 7c 66 31 d2 66 f7 34 88
+    [0x0130] d1 31 d2 66 f7 74 04 3b
+    [0x0138] 44 08 7d 37 fe c1 88 c5
+    [0x0140] 30 c0 c1 e8 02 08 c1 88
+    [0x0148] d0 5a 88 c6 bb 00 70 8e
+    [0x0150] c3 31 db b8 01 02 cd 13
+    [0x0158] 72 1e 8c c3 60 1e b9 00
+    [0x0160] 01 8e db 31 f6 bf 00 80
+    [0x0168] 8e c6 fc f3 a5 1f 61 ff
+    [0x0170] 26 5a 7c be 8e 7d eb 03
+    [0x0178] be 9d 7d e8 34 00 be a2
+    [0x0180] 7d e8 2e 00 cd 18 eb fe
+    [0x0188] 47 52 55 42 20 00 47 65
+    [0x0190] 6f 6d 00 48 61 72 64 20
+    [0x0198] 44 69 73 6b 00 52 65 61
+    [0x01a0] 64 00 20 45 72 72 6f 72
+    [0x01a8] 0d 0a 00 bb 01 00 b4 0e
+    [0x01b0] cd 10 ac 3c 00 75 f4 c3
+    [0x01b8] b5 28 01 00 00 00 00 01
+    [0x01c0] 01 00 83 fe ff ff 3f 00
+    [0x01c8] 00 00 9c c7 5a 02 00 fe
+    [0x01d0] ff ff 82 fe ff ff db c7
+    [0x01d8] 5a 02 d7 03 25 00 00 00
+    [0x01e0] 00 00 00 00 00 00 00 00
+    *
+    [0x01f8] 00 00 00 00 00 00 55 aa
+    --------------------------------
+
 2) - Größe eines Partitionstabelleneintrags: 16 Bytes
    - Offset des ersten Eintrags: 0x01BE (446(10))
-   $ sudo dd if=<path> count=16 bs=1 skip=446 2> | \
-   hexdump -e '"[0x%02_ax] "' -e '8/1 "%02x "' -e '"\n"'
+   2.1)
+   $ sudo dd if=<path> count=16 bs=1 skip=446 | \
+     hexdump -e '"[0x%02_ax] "' -e '8/1 "%02x "' -e '"\n"'
    # Für die Anzahl der Sektoren besser:
-   $ sudo dd if=<path> count=16 bs=1 skip=446 2> | \
-   hexdump -e '"[0x%02_ax] "' -e '2/4 "%d "' -e '"\n"'
+   2.2)
+   $ sudo dd if=<path> count=16 bs=1 skip=446 | \
+     hexdump -e '"[0x%02_ax] "' -e '2/4 "%d "' -e '"\n"'
 
 Beispielausgabe (Hexadezimal):
+------------------------------
 [0x00] 00 20 21 00 83 fe ff ff
 [0x08] 00 08 00 00 00 f8 3f 1a
 
 Beispielausgabe (Integer):
+--------------------------
 [0x00] 2170880 -381
 [0x08] 2048 440399872
 
-3) Unter Annahme der Beispielausgabe in (2)
+Konkretes Ergebnis für die virtuelle Maschine:
+----------------------------------------------
+Kommando 2.1)
+[0x00] 00 01 01 00 83 fe ff ff
+[0x08] 3f 00 00 00 9c c7 5a 02
+    Anmerkung: Wichtig ist hier 0x83 im fünften Byte.
+Dies gibt nämlich den Partitionstypen an. 0x83 steht
+hierbei für Linux native.
+Kommando 2.2)
+[0x00] 65792 -381
+[0x08] 63 39503772
+
+3) Unter Annahme der obigen Ergebnisse für die VM:
 3)a) Typ: 0x83 => Linux native
-3)b) 1. CHS-Eintrag: 0x20, 0x21, 0x00
+3)b) 1. CHS-Eintrag: 0x01, 0x01, 0x00
 3)c) Nicht startfähig, da 0x00 bei Offset 0x0000
-3)d) 440399872 (Bytes 0x0C -> 0x0F interpretiert in litte endian)
+3)d) 39503772 (Bytes 0x0C -> 0x0F interpretiert in litte endian)
 3)e) 2. CHS-Eintrag: 0xfe, 0xff, 0xff
 3)f) 2048 (Bytes 0x08 -> 0x0B interpretiert in little endian)
 
